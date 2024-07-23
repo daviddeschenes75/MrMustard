@@ -50,4 +50,6 @@ def test_bargmann_numpy_state():
 def test_bargmann_numpy_transformation():
     """Tests that the numpy option of the bargmann method of State works correctly"""
     transformation = Ggate(1)
-    assert all(isinstance(thing, np.ndarray) for thing in transformation.bargmann(numpy=True))
+    assert all(
+        isinstance(thing, np.ndarray) for thing in transformation.bargmann(numpy=True)
+    )

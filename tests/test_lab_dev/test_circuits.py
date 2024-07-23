@@ -101,7 +101,9 @@ class TestCircuit:
         exp2 += "mode 2:   ──╰BSgate(0.0,0.0)\n\n\n\n"
         assert out2 == exp2
 
-    @pytest.mark.parametrize("path", [[(0, 1), (2, 3)], [(0, 1), (2, 3), (0, 2), (0, 4), (0, 5)]])
+    @pytest.mark.parametrize(
+        "path", [[(0, 1), (2, 3)], [(0, 1), (2, 3), (0, 2), (0, 4), (0, 5)]]
+    )
     def test_path(self, path):
         vac12 = Vacuum([1, 2])
         d1 = Dgate([1], x=0.1, y=0.1)
@@ -231,7 +233,9 @@ class TestCircuit:
         r2 += "\nmode 2:     ◖Vac◗────────────────────────────────────╰BSgate(0.0,0.0)─────────────"
         assert repr(circ2) == r2 + "\n\n"
 
-        circ3 = Circuit([bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01])
+        circ3 = Circuit(
+            [bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01, bs01]
+        )
         r3 = ""
         r3 += "\nmode 0:   ──╭•────────────────╭•────────────────╭•────────────────╭•────────────── ---"
         r3 += "\nmode 1:   ──╰BSgate(0.0,0.0)──╰BSgate(0.0,0.0)──╰BSgate(0.0,0.0)──╰BSgate(0.0,0.0) ---"

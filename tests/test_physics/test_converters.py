@@ -65,7 +65,9 @@ class TestToFock:
         r"""Tests that the to_fock function works for a coherent state in Bargmann representation."""
         coherent_bargmann = Bargmann(*coherent_state_Abc(x=[0.3], y=[0.1]))
         coherent_fock_no_shape = to_fock(coherent_bargmann)
-        assert math.allclose(coherent_fock_no_shape.array[0, 0], math.exp(-0.5 * (0.3**2 + 0.1**2)))
+        assert math.allclose(
+            coherent_fock_no_shape.array[0, 0], math.exp(-0.5 * (0.3**2 + 0.1**2))
+        )
         assert math.allclose(
             coherent_fock_no_shape.array[0, 1],
             (0.3 + 1j * 0.1) * coherent_fock_no_shape.array[0, 0],
@@ -89,13 +91,18 @@ class TestToFock:
         )
         assert math.allclose(
             coherent_twomode_fock_no_shape.array[0, 0, 2],
-            (0.2 + 1j * 0.1) * coherent_twomode_fock_no_shape.array[0, 0, 1] / math.sqrt(2.0 + 0j),
+            (0.2 + 1j * 0.1)
+            * coherent_twomode_fock_no_shape.array[0, 0, 1]
+            / math.sqrt(2.0 + 0j),
         )
         assert math.allclose(
             coherent_twomode_fock_no_shape.array[0, 1, 2],
             (0.3 + 1j * 0.1) * coherent_twomode_fock_no_shape.array[0, 0, 2],
         )
-        assert coherent_twomode_fock_no_shape.array.shape[-1] == settings.AUTOCUTOFF_MAX_CUTOFF
+        assert (
+            coherent_twomode_fock_no_shape.array.shape[-1]
+            == settings.AUTOCUTOFF_MAX_CUTOFF
+        )
         assert coherent_twomode_fock_no_shape.array.shape == (1, 100, 100)
 
     def test_tofock_from_a_bargmann_displacement_gate(self):
@@ -111,7 +118,9 @@ class TestToFock:
         )
         assert math.allclose(
             dgate_fock_with_shape.array[0, 2, 0],
-            (0.3 + 1j * 0.1) * dgate_fock_with_shape.array[0, 1, 0] / math.sqrt(2.0 + 0j),
+            (0.3 + 1j * 0.1)
+            * dgate_fock_with_shape.array[0, 1, 0]
+            / math.sqrt(2.0 + 0j),
         )
         assert math.allclose(
             dgate_fock_with_shape.array[0, 1, 1],
@@ -124,15 +133,23 @@ class TestToFock:
         r"""Tests that the to_fock function works for a squeezing gate in Bargmann representation."""
         sgate_bargmann = Bargmann(*squeezing_gate_Abc(r=[0.3], delta=[0.1]))
         sgate_fock_with_shape = to_fock(sgate_bargmann, shape=[8, 12])
-        assert math.allclose(sgate_fock_with_shape.array[0, 0, 0], 1 / math.sqrt(math.cosh(0.3)))
+        assert math.allclose(
+            sgate_fock_with_shape.array[0, 0, 0], 1 / math.sqrt(math.cosh(0.3))
+        )
         tanhr = math.sinh(0.3) / math.cosh(0.3)
         assert math.allclose(
             sgate_fock_with_shape.array[0, 2, 0],
-            -tanhr * np.exp(1j * 0.1) * sgate_fock_with_shape.array[0, 0, 0] / math.sqrt(2 + 0j),
+            -tanhr
+            * np.exp(1j * 0.1)
+            * sgate_fock_with_shape.array[0, 0, 0]
+            / math.sqrt(2 + 0j),
         )
         assert math.allclose(
             sgate_fock_with_shape.array[0, 0, 2],
-            tanhr * np.exp(-1j * 0.1) * sgate_fock_with_shape.array[0, 0, 0] / math.sqrt(2 + 0j),
+            tanhr
+            * np.exp(-1j * 0.1)
+            * sgate_fock_with_shape.array[0, 0, 0]
+            / math.sqrt(2 + 0j),
         )
         assert math.allclose(
             sgate_fock_with_shape.array[0, 1, 1],
@@ -167,7 +184,9 @@ class TestToFock:
     def test_tofock_from_a_bargmann_attenuator_channel(self):
         r"""Tests that the to_fock function works for a lossy channel in Bargmann representation."""
         attenuator_bargmann = Bargmann(*attenuator_Abc(eta=0.5))
-        attenuator_bargmann_fock_with_shape = to_fock(attenuator_bargmann, shape=[5, 5, 5, 5])
+        attenuator_bargmann_fock_with_shape = to_fock(
+            attenuator_bargmann, shape=[5, 5, 5, 5]
+        )
         assert attenuator_bargmann_fock_with_shape.array[0, 0, 0, 0, 0] == 1.0
         assert attenuator_bargmann_fock_with_shape.array[0, 0, 0, 0, 1] == 0.0
         assert attenuator_bargmann_fock_with_shape.array[0, 0, 0, 1, 0] == 0.0
@@ -175,6 +194,10 @@ class TestToFock:
         assert math.allclose(
             attenuator_bargmann_fock_with_shape.array[0, 0, 0, 1, 1], math.sqrt(0.5)
         )
-        assert math.allclose(attenuator_bargmann_fock_with_shape.array[0, 0, 0, 2, 1], 0.0)
-        assert math.allclose(attenuator_bargmann_fock_with_shape.array[0, 0, 1, 2, 1], 0.0)
+        assert math.allclose(
+            attenuator_bargmann_fock_with_shape.array[0, 0, 0, 2, 1], 0.0
+        )
+        assert math.allclose(
+            attenuator_bargmann_fock_with_shape.array[0, 0, 1, 2, 1], 0.0
+        )
         assert attenuator_bargmann_fock_with_shape.array.shape == (1, 5, 5, 5, 5)

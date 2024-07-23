@@ -221,7 +221,9 @@ class Number(Ket):
             msg = f"Length of ``cutoffs`` must be 1 or {len(modes)}, found {len(self._cutoffs)}."
             raise ValueError(msg)
 
-        self._representation = Fock.from_function(fock_state, n=self.n, cutoffs=self.cutoffs)
+        self._representation = Fock.from_function(
+            fock_state, n=self.n, cutoffs=self.cutoffs
+        )
 
     @property
     def cutoffs(self):
@@ -402,4 +404,6 @@ class Thermal(DM):
         (nbars,) = list(reshape_params(len(modes), nbar=nbar))
         self._add_parameter(make_parameter(nbar_trainable, nbars, "nbar", nbar_bounds))
 
-        self._representation = Bargmann.from_function(fn=triples.thermal_state_Abc, nbar=self.nbar)
+        self._representation = Bargmann.from_function(
+            fn=triples.thermal_state_Abc, nbar=self.nbar
+        )

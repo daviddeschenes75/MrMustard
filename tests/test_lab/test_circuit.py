@@ -41,7 +41,9 @@ def test_circuit_placement_BS():
 
 def test_circuit_placement_BSBS():
     "tests that BSgates can be placed in any order"
-    assert BSgate(1.0)[1, 2] >> BSgate(1.0)[0, 3] == BSgate(1.0)[0, 3] >> BSgate(1.0)[1, 2]
+    assert (
+        BSgate(1.0)[1, 2] >> BSgate(1.0)[0, 3] == BSgate(1.0)[0, 3] >> BSgate(1.0)[1, 2]
+    )
 
 
 def test_is_unitary():
@@ -58,7 +60,12 @@ def test_len():
 
 
 @given(
-    r=r, phi1=angle, phi2=angle, x=medium_float, y=medium_float, G=n_mode_pure_state(num_modes=1)
+    r=r,
+    phi1=angle,
+    phi2=angle,
+    x=medium_float,
+    y=medium_float,
+    G=n_mode_pure_state(num_modes=1),
 )
 def test_shift(r, phi1, phi2, x, y, G):
     "test that the leftshift/rightshift operator works as expected"

@@ -136,7 +136,9 @@ def vanilla_jacobian(
 
 
 @njit
-def vanilla_vjp(G, c, dLdG) -> tuple[ComplexMatrix, ComplexVector, complex]:  # pragma: no cover
+def vanilla_vjp(
+    G, c, dLdG
+) -> tuple[ComplexMatrix, ComplexVector, complex]:  # pragma: no cover
     r"""Vanilla Fock-Bargmann strategy gradient. Returns dL/dA, dL/db, dL/dc.
 
     Args:
@@ -178,7 +180,9 @@ def vanilla_vjp(G, c, dLdG) -> tuple[ComplexMatrix, ComplexVector, complex]:  # 
         for i, _ in enumerate(db):
             _, n = next(ns)
             db[i] = np.sqrt(index_u[i]) * G_lin[n]
-            dA[i, i] = 0.5 * np.sqrt(index_u[i] * (index_u[i] - 1)) * G_lin[n - strides[i]]
+            dA[i, i] = (
+                0.5 * np.sqrt(index_u[i] * (index_u[i] - 1)) * G_lin[n - strides[i]]
+            )
             for j in range(i + 1, len(db)):
                 dA[i, j] = np.sqrt(index_u[i] * index_u[j]) * G_lin[n - strides[j]]
 
