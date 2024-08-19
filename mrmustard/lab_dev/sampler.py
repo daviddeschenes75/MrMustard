@@ -81,7 +81,7 @@ class HomodyneSampler(Sampler):
         if self._probs is None:
             q_state = state >> BtoQ([0], phi=np.pi / 2)
 
-            probs = [q_state.representation(np.array([[q]])) ** 2 for q in self._meas_outcomes]
+            probs = [q_state.representation(np.array([[q]]))[0] ** 2 for q in self._meas_outcomes]
 
             return probs
         return self._probs
