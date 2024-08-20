@@ -74,9 +74,7 @@ class Sampler:
             n_samples: The number of samples to generate.
         """
         rng = np.random.default_rng()
-        return [
-            rng.choice(a=self._meas_outcomes, p=self.probabilities(state)) for _ in range(n_samples)
-        ]
+        return rng.choice(a=self._meas_outcomes, p=self.probabilities(state), size=n_samples)
 
     def probabilities(self, state: State | None = None) -> list[float]:
         r"""
