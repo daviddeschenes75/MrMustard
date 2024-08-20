@@ -74,7 +74,9 @@ class Sampler:
             n_samples: The number of samples to generate.
         """
         rng = np.random.default_rng()
-        return [rng.choice(a=self._meas_outcomes, p=self.probs(state)) for _ in range(n_samples)]
+        return [
+            rng.choice(a=self._meas_outcomes, p=self.probabilities(state)) for _ in range(n_samples)
+        ]
 
     def probabilities(self, state: State | None = None) -> list[float]:
         r"""
@@ -126,10 +128,7 @@ class HomodyneSampler(Sampler):
     def probabilities(self, state: State | None = None):
         if self._probs is None:
             q_state = state >> self.meas_ops
-            probs = [
-                math.real(q_state.representation(np.array([[q]]))[0]) ** 2
-                for q in self._meas_outcomes
-            ]
+            probs = [math.real(q_state.representation([[q]])[0]) ** 2 for q in self._meas_outcomes]
             probs /= sum(probs)
             return probs
         return self._probs
