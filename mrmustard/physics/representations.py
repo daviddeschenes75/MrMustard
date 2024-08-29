@@ -312,7 +312,10 @@ class Bargmann(Representation):
         r"""
         The scalar part of the representation.
         """
-        return self.c
+        if self.ansatz.polynomial_shape[0] > 0:
+            return self([])
+        else:
+            return self.c
 
     @property
     def triple(
@@ -439,10 +442,6 @@ class Bargmann(Representation):
         Returns:
             Bargmann: the ansatz with the given indices traced over
         """
-        if self.ansatz.degree > 0:
-            raise NotImplementedError(
-                "Partial trace is only supported for ansatze with polynomial of degree ``0``."
-            )
         A, b, c = [], [], []
         for Abc in zip(self.A, self.b, self.c):
             Aij, bij, cij = complex_gaussian_integral(Abc, idx_z, idx_zconj, measure=-1.0)

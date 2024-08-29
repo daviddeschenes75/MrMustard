@@ -70,9 +70,12 @@ class TestKet:  # pylint: disable=too-many-public-methods
 
     def test_auto_shape(self):
         ket = Coherent([0, 1], x=[1, 2])
-        assert ket.auto_shape() == (5, 11)
+        assert ket.auto_shape() == (8, 15)
         ket.manual_shape[0] = 19
-        assert ket.auto_shape() == (19, 11)
+        assert ket.auto_shape() == (19, 15)
+
+        ket = Coherent([0, 1], x=1) >> Number([1], 10).dual
+        assert ket.auto_shape() == (settings.AUTOSHAPE_MAX,)
 
     @pytest.mark.parametrize("modes", [[0], [0, 1], [3, 19, 2]])
     def test_to_from_bargmann(self, modes):
@@ -246,13 +249,13 @@ class TestKet:  # pylint: disable=too-many-public-methods
         assert math.allclose(ket.expectation(k1), res_k1)
         assert math.allclose(ket.expectation(k01), res_k01)
 
-        dm0 = Coherent([0], x=1, y=0.2).dm()
-        dm1 = Coherent([1], x=1, y=0.3).dm()
-        dm01 = Coherent([0, 1], x=1, y=[0.2, 0.3]).dm()
+        dm0 = Coherent([0], x=1, y=0.2).dm().to_fock(10)
+        dm1 = Coherent([1], x=1, y=0.3).dm().to_fock(10)
+        dm01 = Coherent([0, 1], x=1, y=[0.2, 0.3]).dm().to_fock(10)
 
         res_dm0 = (ket @ ket.adjoint @ dm0.dual) >> TraceOut([1])
         res_dm1 = (ket @ ket.adjoint @ dm1.dual) >> TraceOut([0])
-        res_dm01 = (ket @ ket.adjoint @ dm01.dual).representation.array
+        res_dm01 = (ket @ ket.adjoint @ dm01.dual).to_fock(10).representation.array
 
         assert math.allclose(ket.expectation(dm0), res_dm0)
         assert math.allclose(ket.expectation(dm1), res_dm1)
@@ -262,9 +265,9 @@ class TestKet:  # pylint: disable=too-many-public-methods
         u1 = Dgate([0], x=0.2)
         u01 = Dgate([0, 1], x=[0.3, 0.4])
 
-        res_u0 = (ket @ u0 @ ket.dual).representation.array
-        res_u1 = (ket @ u1 @ ket.dual).representation.array
-        res_u01 = (ket @ u01 @ ket.dual).representation.array
+        res_u0 = (ket @ u0 @ ket.dual).to_fock(10).representation.array
+        res_u1 = (ket @ u1 @ ket.dual).to_fock(10).representation.array
+        res_u01 = (ket @ u01 @ ket.dual).to_fock(10).representation.array
 
         assert math.allclose(ket.expectation(u0), res_u0[0])
         assert math.allclose(ket.expectation(u1), res_u1[0])
@@ -355,7 +358,6 @@ class TestKet:  # pylint: disable=too-many-public-methods
 
     def test_private_batched_properties(self):
         cat = Coherent([0], x=1.0) + Coherent([0], x=-1.0)  # used as a batch
-        assert np.allclose(cat._purities, np.ones(2))
         assert np.allclose(cat._probabilities, np.ones(2))
         assert np.allclose(cat._L2_norms, np.ones(2))
 
@@ -430,9 +432,12 @@ class TestDM:  # pylint:disable=too-many-public-methods
 
     def test_auto_shape(self):
         dm = Coherent([0, 1], x=[1, 2]).dm()
-        assert dm.auto_shape() == (5, 11, 5, 11)
+        assert dm.auto_shape() == (8, 15, 8, 15)
         dm.manual_shape[0] = 1
-        assert dm.auto_shape() == (1, 11, 5, 11)
+        assert dm.auto_shape() == (1, 15, 8, 15)
+
+        dm = Coherent([0, 1], x=1).dm() >> Number([1], 10).dual
+        assert dm.auto_shape() == (settings.AUTOSHAPE_MAX, settings.AUTOSHAPE_MAX)
 
     @pytest.mark.parametrize("modes", [[0], [0, 1], [3, 19, 2]])
     def test_to_from_bargmann(self, modes):
@@ -536,6 +541,11 @@ class TestDM:  # pylint:disable=too-many-public-methods
 
         state3 = Number([0], n=1, cutoffs=2).dm() / 2 + Number([0], n=2).dm() / 2
         assert math.allclose(state3.probability, 1)
+
+    def test_probability_from_ket(self):
+        ket_state = Vacuum([0, 1]) >> Number([0], n=1).dual
+        dm_state = ket_state.dm()
+        assert dm_state.probability == ket_state.probability
 
     def test_purity(self):
         state = Coherent([0], 1, 2).dm()
