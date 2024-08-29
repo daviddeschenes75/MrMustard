@@ -37,7 +37,7 @@ class MeasurementDevice(CircuitComponent):
     ):
         super().__init__(
             representation=None,
-            wires=[(), modes, (), modes, modes, ()],
+            wires=[(), modes, (), modes],
             name=name or "MD" + "".join(str(m) for m in modes),
         )
 

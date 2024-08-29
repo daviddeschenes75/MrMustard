@@ -24,6 +24,7 @@ from typing import Sequence
 
 from .base import MeasurementDevice
 from ..circuit_components import CircuitComponent
+from ..states import State
 from ..sampler import PNRSampler
 from mrmustard import settings, math
 
@@ -46,7 +47,7 @@ class PNR(MeasurementDevice):
         self._cutoff = cutoff or settings.AUTOCUTOFF_MAX_CUTOFF
         super().__init__(
             modes=modes,
-            sampler=PNRSampler(cutoff),
+            sampler=PNRSampler(modes, cutoff),
             name="PNR",
         )
 
@@ -58,7 +59,11 @@ class PNR(MeasurementDevice):
         return self._cutoff
 
     def __custom_rrshift__(self, other: CircuitComponent | complex) -> CircuitComponent:
-        r"""A custom ``>>`` operator for the ``PNR`` component.
+        r"""
+        A custom ``>>`` operator for the ``PNR`` component.
         It allows ``PNR`` to carry the method that processes ``other >> PNR``.
         """
+        if isinstance(other, State) and self.modes == other.modes:
+            return self.sampler.sample(other, 1)
+
         return 1.0
